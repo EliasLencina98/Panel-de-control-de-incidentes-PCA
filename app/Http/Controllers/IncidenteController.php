@@ -256,7 +256,7 @@ class IncidenteController extends Controller
                 'date_format:Y-m-d',
                 Rule::when($request->filled('fecha_inicio'), 'after_or_equal:fecha_inicio'),
             ],
-            'gravedad'     => ['nullable', 'in:Leve,Moderado,Grave,Fatal'],
+            'gravedad'     => ['nullable', 'in:leve,moderado,grave,fatal'],
             'tipo'         => ['nullable', 'string'],
             'estado'       => ['nullable', 'in:pendiente,en proceso,resuelto'],
         ]);
@@ -290,10 +290,10 @@ class IncidenteController extends Controller
             ->pluck('total', 'gravedad');
 
         $total    = $porGravedad->sum();
-        $leves    = (int) ($porGravedad['Leve'] ?? 0);
-        $moderados   = (int) ($porGravedad['Moderado'] ?? 0);
-        $graves  = (int) ($porGravedad['Grave'] ?? 0);
-        $fatales = (int) ($porGravedad['Fatal'] ?? 0);
+        $leves    = (int) ($porGravedad['leve'] ?? 0);
+        $moderados   = (int) ($porGravedad['moderado'] ?? 0);
+        $graves  = (int) ($porGravedad['grave'] ?? 0);
+        $fatales = (int) ($porGravedad['fatal'] ?? 0);
 
         $pct = fn(int $cantidad): int => $total > 0 ? (int) round(($cantidad / $total) * 100) : 0;
 
