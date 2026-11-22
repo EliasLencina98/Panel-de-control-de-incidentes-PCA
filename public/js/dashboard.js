@@ -2,6 +2,8 @@
     const form = document.querySelector("#form-filtros-dashboard");
     const btnLimpiar = document.querySelector("#btn-limpiar-filtros");
 
+    console.log("adentro");
+
     let capasIncidentes = null;
     let mapaCalor = null;
 
@@ -24,6 +26,7 @@
     let graficoGravedad = null;
     let graficoTipo = null;
 
+    function IniciarGraficos() {
     async function IniciarGraficos() {
         const elTendencia = document.querySelector("#grafico-tendencia");
         if (elTendencia && typeof ApexCharts !== "undefined") {
@@ -52,6 +55,7 @@
                     style: { color: "#a8b5c9", fontSize: "13px" },
                 },
             });
+            graficoTendencia.render();
             await graficoTendencia.render();
         }
 
@@ -81,6 +85,7 @@
                 legend: { show: false },
                 dataLabels: { enabled: false },
             });
+            graficoGravedad.render();
             await graficoGravedad.render();
         }
 
@@ -105,6 +110,33 @@
                     style: { color: "#a8b5c9", fontSize: "13px" },
                 },
             });
+            graficoTipo.render();
+        }
+    }
+
+    function actualizarGraficos(data) {
+        if (graficoTendencia) {
+            const meses = (data.tendencia || []).map((item) => item.mes);
+            const totales = (data.tendencia || []).map((item) =>
+                Number(item.total),
+            );
+
+            graficoTendencia.updateOptions({
+                xaxis: { categories: meses },
+            });
+            graficoTendencia.updateSeries([{ name: "Incidentes", data: totales }]);
+        }
+
+        if (graficoGravedad) {
+            const g = data.por_gravedad || {};
+            graficoGravedad.updateSeries([
+                {
+                    name: "Incidentes",
+                    data: [
+                        Number(g.leve || 0),
+                        Number(g.moderado || 0),
+                        Number(g.grave || 0),
+                        Number(g.fatal || 0),
             await graficoTipo.render();
         }
     }
@@ -139,6 +171,14 @@
         }
 
         if (graficoTipo) {
+            const items = data.por_tipo || [];
+            const labels = items.map((item) => item.tipo || "Sin especificar");
+            const series = items.map((item) => Number(item.total));
+
+            graficoTipo.updateOptions({ labels });
+            graficoTipo.updateSeries(series);
+        }
+    }
             await graficoTipo.updateOptions({
                 labels: data.por_tipo.map((item) => item.tipo),
                 series: data.por_tipo.map((item) => Number(item.total)),
@@ -263,6 +303,7 @@
                 intensidad = 0.5;
                 break;
             case "moderado":
+                intensidad = 0.25;
                 intensidad = 0.65;
                 break;
             case "grave":
@@ -311,6 +352,15 @@
             detalle.appendChild(detallePopUp);
 
             //apariencia del marcador segun gravedad
+            let claseIcono = "icono-moderado";
+
+            if (incidente.gravedad === "Leve") {
+                claseIcono = "icono-leve";
+            } else if (incidente.gravedad === "Grave") {
+                claseIcono = "icono-grave";
+            } else if (incidente.gravedad === "Fatal") {
+                claseIcono = "icono-fatal";
+            }
             const clasesPorGravedad = {
                 leve: "icono-leve",
                 moderado: "icono-moderado",
@@ -331,6 +381,11 @@
         mapaCalor.setLatLngs(puntosCalor);
     }
 
+    async function cargarDashboard() {
+        const parametros = new URLSearchParams(new FormData(form));
+        const url = new URL(form.action);
+        url.search = parametros.toString();
+
     
     async function cargarDashboard() {
         const mensaje = document.getElementById("mensaje-dashboard");
@@ -348,6 +403,17 @@
                 },
             });
 
+            if (!response.ok) {
+                throw new Error(`Error HTTP ${response.status}`);
+            }
+
+            const data = await response.json();
+            actualizarKpis(data.kpis || {});
+            actualizarGraficos(data);
+            console.log(data.incidentes);
+            actualizarMapa(data.incidentes)
+        } catch (error) {}
+    }
             const data = await response.json();
 
             if (!response.ok) {
@@ -385,6 +451,9 @@
         });
     }
 
+    document.addEventListener("DOMContentLoaded", () => {
+        iniciarMapa();
+        IniciarGraficos();
     document.addEventListener("DOMContentLoaded", async () => {
         iniciarMapa();
         await IniciarGraficos();

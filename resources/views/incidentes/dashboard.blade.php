@@ -7,6 +7,11 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
     crossorigin="" />
+    <link rel="stylesheet" href="{{ asset('css/incidentes.css') }}">
+@endpush
+
+@push("scripts")
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
 @endpush
 
@@ -27,6 +32,9 @@
             </p>
         </div>
         <div>
+            <button type="button" onclick="" class="panel-boton panel-boton-verde">
+                <span>+ Registrar Incidente</span>
+            </button>
             <a href="{{ route('incidentes.create') }}" class="panel-boton panel-boton-verde">
                 Registrar incidente
             </a>
@@ -34,6 +42,15 @@
     </div>
 
     <form method="GET" action="{{ route('incidentes.dashboardDatos') }}" class="panel-tarjeta dash-filtros" id="form-filtros-dashboard">
+        <div class="dash-filtros-grid">
+            <div class="dash-campo">
+                <label for="filtro-desde" class="dash-label">Desde</label>
+                <input
+                    type="date"
+                    id="filtro-desde"
+                    name="fecha_inicio"
+                    value="{{ $filtros['fecha_inicio'] ?? '' }}"
+                    class="dash-input">
 
         <div class="dash-filtros-grid">
             <div class="dash-campo">
@@ -43,6 +60,12 @@
 
             <div class="dash-campo">
                 <label for="filtro-hasta" class="dash-label">Hasta</label>
+                <input
+                    type="date"
+                    id="filtro-hasta"
+                    name="fecha_fin"
+                    value="{{ $filtros['fecha_fin'] ?? '' }}"
+                    class="dash-input">
                 <input type="date" id="filtro-hasta" name="fecha_fin" value="{{ $filtros['fecha_fin'] ?? '' }}" class="dash-input">
             </div>
 
@@ -85,6 +108,10 @@
 
         <div class="dash-filtros-acciones">
             <button type="submit" class="panel-boton panel-boton-verde">Aplicar filtros</button>
+            <a href="{{ route('incidentes.dashboard') }}" class="dash-btn-limpiar">Limpiar</a>
+        </div>
+    </form>
+
             <a href="{{ route('incidentes.dashboard') }}" id="btn-limpiar-filtros" class="dash-btn-limpiar">Limpiar</a>
         </div>
     </form>
@@ -200,6 +227,9 @@
                     <h2>Analisis riesgo geografico (Mapa de calor)</h2>
                     <p class="panel-texto-secundario dash-subtitulo-sm">Vista rápida de puntos críticos en Añelo, Neuquén, Cipolletti y alrededores</p>
                 </div>
+                <button type="button" onclick="" class="dash-link-btn">
+                    <span>Abrir mapa completo</span>
+                </button>
                 <a href="{{ route('incidentes.mapa') }}" class="dash-link-btn">
                     Abrir mapa completo
                 </a>
