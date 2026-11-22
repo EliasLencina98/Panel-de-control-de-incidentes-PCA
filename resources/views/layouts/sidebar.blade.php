@@ -5,13 +5,14 @@
 
         <ul class="panel-menu">
             <!-- Creacion de usuarios (administrador) / Dashboard / Incidentes / Vista de mapa -->
-            @if (auth()->user()->rol === 'administrador')
+            
+            @can("crear-usuarios")
                 <li>
                     <a href="{{ route('usuarios.create') }}" class="panel-menu-enlace {{ request()->routeIs('usuarios.*') ? 'activo' : '' }}">
                         &#128100; Crear usuario
                     </a>
                 </li>
-            @endif
+            @endcan 
 
             <li>
                 <a href="{{ route("incidentes.dashboard") }}" class="panel-menu-enlace {{ request()->routeIs("incidentes.dashboard") ? "activo" : "" }}">

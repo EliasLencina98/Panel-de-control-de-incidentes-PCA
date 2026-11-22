@@ -12,6 +12,11 @@
 
 @push("scripts")
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+@endpush
+
+@push("scripts")
+<script src="https://cdn.jsdelivr.net/npm/apexcharts" defer></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
 <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js" defer></script>
 <script src="{{ asset('js/dashboard.js') }}" defer></script>
@@ -30,6 +35,9 @@
             <button type="button" onclick="" class="panel-boton panel-boton-verde">
                 <span>+ Registrar Incidente</span>
             </button>
+            <a href="{{ route('incidentes.create') }}" class="panel-boton panel-boton-verde">
+                Registrar incidente
+            </a>
         </div>
     </div>
 
@@ -43,6 +51,11 @@
                     name="fecha_inicio"
                     value="{{ $filtros['fecha_inicio'] ?? '' }}"
                     class="dash-input">
+
+        <div class="dash-filtros-grid">
+            <div class="dash-campo">
+                <label for="filtro-desde" class="dash-label">Desde</label>
+                <input type="date" id="filtro-desde" name="fecha_inicio" value="{{ $filtros['fecha_inicio'] ?? '' }}" class="dash-input">
             </div>
 
             <div class="dash-campo">
@@ -53,6 +66,7 @@
                     name="fecha_fin"
                     value="{{ $filtros['fecha_fin'] ?? '' }}"
                     class="dash-input">
+                <input type="date" id="filtro-hasta" name="fecha_fin" value="{{ $filtros['fecha_fin'] ?? '' }}" class="dash-input">
             </div>
 
             <div class="dash-campo">
@@ -97,6 +111,12 @@
             <a href="{{ route('incidentes.dashboard') }}" class="dash-btn-limpiar">Limpiar</a>
         </div>
     </form>
+
+            <a href="{{ route('incidentes.dashboard') }}" id="btn-limpiar-filtros" class="dash-btn-limpiar">Limpiar</a>
+        </div>
+    </form>
+
+    <p id="mensaje-dashboard" class="panel-texto-secundario"></p>
 
     {{-- Tarjetas de KPIs --}}
     <div class="dash-kpi-grid">
@@ -210,6 +230,9 @@
                 <button type="button" onclick="" class="dash-link-btn">
                     <span>Abrir mapa completo</span>
                 </button>
+                <a href="{{ route('incidentes.mapa') }}" class="dash-link-btn">
+                    Abrir mapa completo
+                </a>
             </div>
             <div id="dashboard-mini-map" class="dash-mapa"></div>
         </div>

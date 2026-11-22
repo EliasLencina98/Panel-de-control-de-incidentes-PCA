@@ -8,6 +8,7 @@
 
 @section('contenido')
     <section class="gestion">
+
         <div class="panel-tarjeta gestion-encabezado">
             <div>
                 <h1>Incidente #{{ $incidente->id }}</h1>
@@ -27,6 +28,7 @@
                 </a>
             </div>
         </div>
+
 
         <div class="panel-tarjeta gestion-detalle">
             <h2>Datos generales</h2>
@@ -83,5 +85,83 @@
                 </div>
             </dl>
         </div>
+
+        <div class="panel-tarjeta gestion-detalle">
+            <h2>Responsables de investigación</h2>
+
+            <div class="responsables-listado">
+                @forelse ($incidente->responsables as $responsable)
+                    <article class="gestion-registro">
+
+                        <div class="gestion-registro-contenido">
+
+                            <h3>{{ $responsable->name }}</h3>
+                            <p>DNI: {{ $responsable->dni }}</p>
+                            <p>Asignado el: {{ $responsable->pivot->fecha_asignacion }} </p>
+
+                        </div>
+
+                        <!-- Solo administrador -->
+                        @can("gestionar-responsables")
+                            <form
+                                action="{{ route('incidentes.responsables.destroy', [$incidente->id, $responsable->id]) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+
+                                <button type="submit" class="panel-boton gestion-boton-rojo">Quitar asignación</button>
+                            </form>
+                        @endcan
+
+                    </article>
+
+                @empty
+                    <p class="panel-texto-secundario">Este incidente todavía no tiene responsables asignados.</p>
+
+                @endforelse
+            </div>
+
+            <!--Solo administrador-->
+            @can("gestionar-responsables")
+
+                <div class="responsables-asignacion">
+                    <h3>Asignar responsable</h3>
+
+                    @error('usuario_id')
+                        <p class="gestion-errores">{{ $message }}</p>
+                    @enderror
+
+                    @if ($usuariosDisponibles->isNotEmpty())
+                        <form action="{{ route('incidentes.responsables.store', $incidente->id) }}" method="POST">
+                            @csrf
+
+                            <div class="gestion-campos">
+                                <div>
+                                    <label for="usuario_id">Usuario</label>
+                                    <select id="usuario_id" name="usuario_id" required>
+                                        <option value="">Seleccionar usuario</option>
+                                        @foreach ($usuariosDisponibles as $usuario)
+                                            <option value="{{ $usuario->id }}" @selected(old('usuario_id') == $usuario->id)>
+                                                {{ $usuario->name }} - DNI {{ $usuario->dni }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+
+                                </div>
+                            </div>
+
+                            <div class="gestion-formulario-acciones">
+                                <button type="submit" class="panel-boton gestion-boton-azul">
+                                    Asignar responsable
+                                </button>
+                            </div>
+                        </form>
+                    @else
+                        <p class="panel-texto-secundario">Todos los usuarios están asignados a este incidente.</p>
+                    @endif
+                </div>
+
+            @endcan
+        </div>
+
     </section>
 @endsection

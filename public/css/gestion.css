@@ -358,3 +358,22 @@
     opacity: 0.6;
     cursor: wait;
 }
+
+/* Responsables */
+.gestion .responsables-listado {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.gestion .responsables-asignacion {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--panel-borde);
+}
+
+.gestion .responsables-asignacion h3 {
+    margin: 0 0 16px;
+    font-size: 16px;
+}

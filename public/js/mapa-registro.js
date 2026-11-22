@@ -59,8 +59,6 @@ mapa.on('click', async function(e) {
 
             mapa.setView([latAjustada, lonAjustada], 14);
 
-            console.log("Dirección encontrada:", direccionCompleta);
-
         } else {
             alert("No se encontró una dirección válida en este punto.");
         }

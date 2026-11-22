@@ -8,11 +8,13 @@ use Illuminate\Http\Request;
 class ChoferController extends Controller
 {
 
+/*
     public function index()
     {
         $choferes = Chofer::all();
         return view('choferes.index', compact('choferes'));
     }
+*/
 
     public function create()
     {
