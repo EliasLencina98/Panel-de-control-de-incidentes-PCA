@@ -342,7 +342,6 @@ class IncidenteController extends Controller
             ]);
     }
 
-    public function destroy(int $id)
 
     //Acciones administrador
     public function asignarResponsable (Request $request, int $id)
@@ -379,101 +378,6 @@ class IncidenteController extends Controller
 
         return redirect()->route("incidentes.show", $id)->with("mensaje", $eliminado ? 
         "El usuario fue removido correctamente." : "El usuario no estaba asignado al incidente.");
-    }
-
-
-    //Dashboard
-    public function dashboard(): View
-    {
-        $tiposDisponibles = Incidente::query()->distinct()->orderBy("tipo")->pluck("tipo");
-
-        $estadosDisponibles = Incidente::query()->distinct()->orderBy("estado")->pluck("estado");
-
-        $gravedadDisponibles = ["leve", "moderado", "grave", "fatal"];
-
-        return view("incidentes.dashboard", compact("tiposDisponibles", "estadosDisponibles", "gravedadDisponibles"));
-    }
-
-    public function dashboardDatos(Request $request) 
-    {
-        $filtros = $request->validate([
-                "fecha_inicio" => ['nullable', 'date_format:Y-m-d'],
-                "fecha_fin" => ['nullable','date_format:Y-m-d',
-                    Rule::when( $request->filled('fecha_inicio'),'after_or_equal:fecha_inicio'),], //igual o posterior
-                "gravedad" => ['nullable', 'in:leve,moderado,grave,fatal'],
-                "tipo" => ['nullable', 'string'],
-                "estado" => ['nullable', 'in:pendiente,en proceso,resuelto'],
-                ]);
-
-        $consulta = Incidente::query();
-
-        if(!empty($filtros["fecha_inicio"])) {
-            $consulta->where("fecha", ">=", $filtros["fecha_inicio"]);
-        }
-
-        if (!empty($filtros['fecha_fin'])) {
-        $consulta->where('fecha', '<=', $filtros['fecha_fin']);
-        }
-
-        if (!empty($filtros['gravedad'])) {
-            $consulta->where('gravedad', $filtros['gravedad']);
-        }
-
-        if (!empty($filtros['tipo'])) {
-            $consulta->where('tipo', $filtros['tipo']);
-        }
-
-        if (!empty($filtros['estado'])) {
-            $consulta->where('estado', $filtros['estado']);
-        }
-
-
-        //Cantidades por gravedad (Ej: Leve => 5)
-        $porGravedad = (clone $consulta)->selectRaw("gravedad, COUNT(*) as total")->groupBy("gravedad")->pluck('total', 'gravedad');
-
-        $leves = (int) ($porGravedad["leve"] ?? 0);
-        $moderados = (int) ($porGravedad["moderado"] ?? 0);
-        $graves = (int) ($porGravedad["grave"] ?? 0);
-        $fatales = (int) ($porGravedad["fatal"] ?? 0);
-        $total = (int) $porGravedad->sum();
-
-        $kpis = [
-            "total" => $total,
-            "leves" => $leves,
-            "moderados" => $moderados,
-            "graves" => $graves,
-            "fatales" => $fatales,
-            "leves_pct" => $total > 0 ? round($leves * 100 / $total) : 0,
-            "moderados_pct" => $total > 0 ? round($moderados * 100 / $total) : 0,
-            "graves_pct" => $total > 0 ? round($graves * 100 / $total) : 0,
-            "fatales_pct" => $total > 0 ? round($fatales * 100 / $total) : 0,
-        ];
-
-
-        //Agrupacion mensual para SQLITE
-        $tendencia = (clone $consulta)->selectRaw("strftime('%Y-%m', fecha) as mes, COUNT(*) as total")
-        ->groupBy('mes')
-        ->orderBy('mes')
-        ->get();
-
-        $porTipo = (clone $consulta)->selectRaw('tipo, COUNT(*) as total')->groupBy('tipo')->orderByDesc('total')->get();
-
-        $incidentes = (clone $consulta)->whereNotNull('latitud')->whereNotNull('longitud')->get([
-        'id', 'fecha', 'tipo', 'gravedad', 'estado','latitud', 'longitud', 'ubicacion', 'descripcion',]);
-
-        return response()->json([
-            "kpis" => $kpis,
-            "tendencia" => $tendencia, 
-            "por_gravedad" => [
-                "leve" => $leves,
-                "moderado" => $moderados, 
-                "grave" => $graves, 
-                "fatal" => $fatales
-                ],
-            "por_tipo" => $porTipo, 
-            "incidentes" => $incidentes
-        ]);
-
     }
     
 }
