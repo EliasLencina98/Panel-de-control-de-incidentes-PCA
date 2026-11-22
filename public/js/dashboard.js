@@ -27,7 +27,6 @@
     let graficoTipo = null;
 
     function IniciarGraficos() {
-    async function IniciarGraficos() {
         const elTendencia = document.querySelector("#grafico-tendencia");
         if (elTendencia && typeof ApexCharts !== "undefined") {
             graficoTendencia = new ApexCharts(elTendencia, {
@@ -56,7 +55,6 @@
                 },
             });
             graficoTendencia.render();
-            await graficoTendencia.render();
         }
 
         const elGravedad = document.querySelector("#grafico-gravedad");
@@ -86,7 +84,6 @@
                 dataLabels: { enabled: false },
             });
             graficoGravedad.render();
-            await graficoGravedad.render();
         }
 
         const elTipo = document.querySelector("#grafico-tipo");
@@ -137,34 +134,6 @@
                         Number(g.moderado || 0),
                         Number(g.grave || 0),
                         Number(g.fatal || 0),
-            await graficoTipo.render();
-        }
-    }
-
-    
-    async function actualizarGraficos(data) {
-
-        if (graficoTendencia) {
-            const meses = data.tendencia.map((item) => item.mes);
-            const totales = data.tendencia.map((item) => Number(item.total));
-
-            await graficoTendencia.updateOptions({
-                    xaxis: {
-                        categories: meses,},
-                    series: [{name: "Incidentes", data: totales,},],
-            });
-        }
-
-        if (graficoGravedad) {
-            const gravedad = data.por_gravedad;
-
-            await graficoGravedad.updateSeries([
-                {name: "Incidentes",
-                    data: [
-                        gravedad.leve,
-                        gravedad.moderado,
-                        gravedad.grave,
-                        gravedad.fatal,
                     ],
                 },
             ]);
@@ -179,13 +148,6 @@
             graficoTipo.updateSeries(series);
         }
     }
-            await graficoTipo.updateOptions({
-                labels: data.por_tipo.map((item) => item.tipo),
-                series: data.por_tipo.map((item) => Number(item.total)),
-            });
-        }
-    }
-    
 
     function actualizarKpis(kpis) {
 
@@ -304,7 +266,6 @@
                 break;
             case "moderado":
                 intensidad = 0.25;
-                intensidad = 0.65;
                 break;
             case "grave":
                 intensidad = 0.8;
@@ -361,14 +322,6 @@
             } else if (incidente.gravedad === "Fatal") {
                 claseIcono = "icono-fatal";
             }
-            const clasesPorGravedad = {
-                leve: "icono-leve",
-                moderado: "icono-moderado",
-                grave: "icono-grave",
-                fatal: "icono-fatal",
-            };
-
-            const claseIcono = clasesPorGravedad[gravedadHeatmap] ?? "";
             
             //Asignamos la clase al marcador original de Leaflet
             const icono = new L.Icon.Default({ className: claseIcono });
@@ -385,16 +338,6 @@
         const parametros = new URLSearchParams(new FormData(form));
         const url = new URL(form.action);
         url.search = parametros.toString();
-
-    
-    async function cargarDashboard() {
-        const mensaje = document.getElementById("mensaje-dashboard");
-        const parametros = new URLSearchParams(new FormData(form));
-
-        const url = new URL(form.action);
-        url.search = parametros.toString();
-
-        mensaje.textContent = "Actualizando Dashboard...";
 
         try {
             const response = await fetch(url, {
@@ -414,29 +357,6 @@
             actualizarMapa(data.incidentes)
         } catch (error) {}
     }
-            const data = await response.json();
-
-            if (!response.ok) {
-                const errores = Object.values(data.errors ?? {})
-                    .flat()
-                    .join(" ");
-
-                throw new Error(
-                    errores || "No se pudieron consultar las estadísticas."
-                );
-            }
-
-            actualizarKpis(data.kpis);
-            await actualizarGraficos(data);
-            actualizarMapa(data.incidentes);
-
-            mensaje.textContent = "Dashboard actualizado.";
-        } catch (error) {
-            console.error(error);
-            mensaje.textContent = error.message;
-        }
-    }
-    
 
     form.addEventListener("submit", (event) => {
         event.preventDefault();
@@ -454,9 +374,6 @@
     document.addEventListener("DOMContentLoaded", () => {
         iniciarMapa();
         IniciarGraficos();
-    document.addEventListener("DOMContentLoaded", async () => {
-        iniciarMapa();
-        await IniciarGraficos();
         cargarDashboard();
     });
 })();
