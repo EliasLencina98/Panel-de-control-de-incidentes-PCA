@@ -73,9 +73,9 @@ class IncidenteController extends Controller
             "descripcion" => ["string", "required"],
             "causa_raiz" => ["nullable", "in:Factor humano,Falla mecanica,Condiciones climaticas,Otro"],
             "accion_correlativa" => ["nullable", "string"],
-            "estado" => ["required", "in:pendiente,en proceso,resuelto"],
-            "vehiculo_id" => ["required", "exists:vehiculo,id"],
-            "chofer_id" => ["required", "exists:chofer,id"],
+            "estado" => ["nullable", "in:pendiente,en proceso,resuelto"],
+            "vehiculo_id" => ["nullable", "exists:vehiculo,id"],
+            "chofer_id" => ["nullable", "exists:chofer,id"],
         ]);
 
         // calculamos automaticamente la gravedad usando la matriz de gravedad
@@ -100,9 +100,9 @@ class IncidenteController extends Controller
             "descripcion" => $validated["descripcion"],
             "causa_raiz" => $validated["causa_raiz"] ?? null,
             "accion_correlativa" => $validated["accion_correlativa"] ?? null,
-            "estado" => $validated["estado"],
-            "vehiculo_id" => $validated["vehiculo_id"],
-            "chofer_id" => $validated["chofer_id"],
+            "estado" => $validated["estado"] ?? 'pendiente',
+            "vehiculo_id" => $validated["vehiculo_id"] ?? null,
+            "chofer_id" => $validated["chofer_id"] ?? null,
         ]);
 
         return redirect()->route("incidentes.index")
@@ -315,7 +315,7 @@ class IncidenteController extends Controller
             'incidentes' => $incidentes,
             ]);
     }
-    
+
     public function destroy(int $id)
     {
         $incidente = Incidente::findOrFail($id);
