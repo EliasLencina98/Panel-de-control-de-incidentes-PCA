@@ -240,6 +240,8 @@ body {
     border-radius: 8px;
 }
 
+
+
 /* Header */
 .panel-header {
     display: flex;
@@ -261,3 +263,6 @@ body {
     color: var(--panel-texto);
     background-color: var(--panel-borde);
 }
+
+
+

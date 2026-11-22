@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Incidente;
 use App\Models\Vehiculo;
 use App\Models\Chofer;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Validation\Rule;
@@ -28,12 +29,18 @@ class IncidenteController extends Controller
         return view("incidentes.create", compact("vehiculos", "choferes"));
     }
 
+
     public function show(Int $id): View
     {
-        $incidente = Incidente::with(['vehiculo', 'chofer'])->findOrFail($id);
+        //Incidente con los implicados (chofer/vehiculos/responsables)
+        $incidente = Incidente::with(['vehiculo', 'chofer', "responsables"])->findOrFail($id);
 
-        return view("incidentes.show", compact("incidente"));
+        //Solo usuarios sin asignacion a una causa
+        $usuariosDisponibles = User::whereNotIn("id", $incidente->responsables->pluck("id"))->orderBy("name")->get();
+
+        return view("incidentes.show", compact("incidente", "usuariosDisponibles"));
     }
+
 
     public function store(Request $request): RedirectResponse
     {
@@ -87,6 +94,8 @@ class IncidenteController extends Controller
             ->with("mensaje", "¡Incidente cargado correctamente!");
     }
 
+
+
     public function edit(Int $id): View
     {
         $incidente = Incidente::findOrFail($id);
@@ -95,6 +104,8 @@ class IncidenteController extends Controller
 
         return view("incidentes.edit", compact("incidente", "vehiculos", "choferes"));
     }
+
+
 
     public function update(Request $request, int $id): RedirectResponse
     {
@@ -131,6 +142,21 @@ class IncidenteController extends Controller
         return redirect()->route("incidentes.index")->with("mensaje", "¡Incidente modificado correctamente!");
     }
 
+
+
+    public function destroy(int $id)
+    {
+        $incidente = Incidente::findOrFail($id);
+        $incidente->delete();
+
+        return response()->json([
+            'mensaje' => 'Incidente eliminado correctamente.',
+        ]);
+    }
+
+
+
+    //Mapa vistas
     public function obtenerDatos(Request $request)
     {
 
@@ -199,13 +225,137 @@ class IncidenteController extends Controller
         ]);
     }
 
-    public function destroy(int $id)
+
+    //Acciones administrador
+    public function asignarResponsable (Request $request, int $id)
     {
         $incidente = Incidente::findOrFail($id);
-        $incidente->delete();
+
+        $datos = $request->validate([
+            "usuario_id" => "required|integer|exists:users,id", //debe existir su id en la base de datos
+        ]);
+
+        //Usuario asignado a incidente
+        $asignado = $incidente->responsables()->where("users.id", $datos["usuario_id"])->exists();
+
+        //Comprobacion de su asignacion
+        if($asignado){
+            return redirect()->route("incidentes.show", $id)->with("mensaje", "El usuario ya esta signado.");
+        }
+
+        //Asignamos usuario a incidente
+        $incidente->responsables()->attach($datos["usuario_id"], ["fecha_asignacion" => now()->toDateString()]);
+
+        return redirect()->route("incidentes.show", $id)->with("mensaje", "Responsable asigando correctamente");
+
+    }
+
+
+
+    public function quitarResponsable (int $id, int $usuario)
+    {
+        $incidente = Incidente::findOrFail($id);
+
+        //Eliminacion de usuario como responsable (no de Users)
+        $eliminado = $incidente->responsables()->detach($usuario); //1: asignado y 0: no esta asignado a ningun incidente 
+
+        return redirect()->route("incidentes.show", $id)->with("mensaje", $eliminado ? 
+        "El usuario fue removido correctamente." : "El usuario no estaba asignado al incidente.");
+    }
+
+
+    //Dashboard
+    public function dashboard(): View
+    {
+        $tiposDisponibles = Incidente::query()->distinct()->orderBy("tipo")->pluck("tipo");
+
+        $estadosDisponibles = Incidente::query()->distinct()->orderBy("estado")->pluck("estado");
+
+        $gravedadDisponibles = ["leve", "moderado", "grave", "fatal"];
+
+        return view("incidentes.dashboard", compact("tiposDisponibles", "estadosDisponibles", "gravedadDisponibles"));
+    }
+
+    public function dashboardDatos(Request $request) 
+    {
+        $filtros = $request->validate([
+                "fecha_inicio" => ['nullable', 'date_format:Y-m-d'],
+                "fecha_fin" => ['nullable','date_format:Y-m-d',
+                    Rule::when( $request->filled('fecha_inicio'),'after_or_equal:fecha_inicio'),], //igual o posterior
+                "gravedad" => ['nullable', 'in:leve,moderado,grave,fatal'],
+                "tipo" => ['nullable', 'string'],
+                "estado" => ['nullable', 'in:pendiente,en proceso,resuelto'],
+                ]);
+
+        $consulta = Incidente::query();
+
+        if(!empty($filtros["fecha_inicio"])) {
+            $consulta->where("fecha", ">=", $filtros["fecha_inicio"]);
+        }
+
+        if (!empty($filtros['fecha_fin'])) {
+        $consulta->where('fecha', '<=', $filtros['fecha_fin']);
+        }
+
+        if (!empty($filtros['gravedad'])) {
+            $consulta->where('gravedad', $filtros['gravedad']);
+        }
+
+        if (!empty($filtros['tipo'])) {
+            $consulta->where('tipo', $filtros['tipo']);
+        }
+
+        if (!empty($filtros['estado'])) {
+            $consulta->where('estado', $filtros['estado']);
+        }
+
+
+        //Cantidades por gravedad (Ej: Leve => 5)
+        $porGravedad = (clone $consulta)->selectRaw("gravedad, COUNT(*) as total")->groupBy("gravedad")->pluck('total', 'gravedad');
+
+        $leves = (int) ($porGravedad["leve"] ?? 0);
+        $moderados = (int) ($porGravedad["moderado"] ?? 0);
+        $graves = (int) ($porGravedad["grave"] ?? 0);
+        $fatales = (int) ($porGravedad["fatal"] ?? 0);
+        $total = (int) $porGravedad->sum();
+
+        $kpis = [
+            "total" => $total,
+            "leves" => $leves,
+            "moderados" => $moderados,
+            "graves" => $graves,
+            "fatales" => $fatales,
+            "leves_pct" => $total > 0 ? round($leves * 100 / $total) : 0,
+            "moderados_pct" => $total > 0 ? round($moderados * 100 / $total) : 0,
+            "graves_pct" => $total > 0 ? round($graves * 100 / $total) : 0,
+            "fatales_pct" => $total > 0 ? round($fatales * 100 / $total) : 0,
+        ];
+
+
+        //Agrupacion mensual para SQLITE
+        $tendencia = (clone $consulta)->selectRaw("strftime('%Y-%m', fecha) as mes, COUNT(*) as total")
+        ->groupBy('mes')
+        ->orderBy('mes')
+        ->get();
+
+        $porTipo = (clone $consulta)->selectRaw('tipo, COUNT(*) as total')->groupBy('tipo')->orderByDesc('total')->get();
+
+        $incidentes = (clone $consulta)->whereNotNull('latitud')->whereNotNull('longitud')->get([
+        'id', 'fecha', 'tipo', 'gravedad', 'estado','latitud', 'longitud', 'ubicacion', 'descripcion',]);
 
         return response()->json([
-            'mensaje' => 'Incidente eliminado correctamente.',
+            "kpis" => $kpis,
+            "tendencia" => $tendencia, 
+            "por_gravedad" => [
+                "leve" => $leves,
+                "moderado" => $moderados, 
+                "grave" => $graves, 
+                "fatal" => $fatales
+                ],
+            "por_tipo" => $porTipo, 
+            "incidentes" => $incidentes
         ]);
+
     }
+    
 }
