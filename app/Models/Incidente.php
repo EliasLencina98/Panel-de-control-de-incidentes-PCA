@@ -46,7 +46,7 @@ class Incidente extends Model
     {
         // Regla absoluta, si hay fatalidad, retorna gravedad fatal. para luego guardarla en la BD
         if ($fatalidad >= 1) {
-            return 'fatal';
+            return 'Fatal';
         }
 
        
@@ -54,18 +54,18 @@ class Incidente extends Model
 
         // Matriz. arreglo asociativo de 2 dimensiones
         $matriz = [
-            'colision/choque vehicular' => [0 => 'moderado', 1 => 'grave', 2 => 'grave'],
-            'impacto objeto fijo'       => [0 => 'leve',     1 => 'moderado', 2 => 'grave'],
-            'vuelco'                    => [0 => 'moderado', 1 => 'grave', 2 => 'grave'],
-            'despiste'                  => [0 => 'moderado', 1 => 'grave', 2 => 'grave'],
-            'atropello'                 => [0 => 'grave',    1 => 'grave', 2 => 'grave'], 
-            'falla mecanica'            => [0 => 'leve',     1 => 'grave', 2 => 'grave'],
-            'principio de incendio/incendio' => [0 => 'moderado', 1 => 'grave', 2 => 'grave'],
-            'daño menor'                => [0 => 'leve',     1 => 'moderado', 2 => 'grave'],
-            'casi incidente'            => [0 => 'leve',     1 => 'moderado', 2 => 'grave'],
+            'colision/choque vehicular' => [0 => 'Moderado', 1 => 'Grave', 2 => 'Grave'],
+            'impacto objeto fijo'       => [0 => 'Leve',     1 => 'Moderado', 2 => 'Grave'],
+            'vuelco'                    => [0 => 'Moderado', 1 => 'Grave', 2 => 'Grave'],
+            'despiste'                  => [0 => 'Moderado', 1 => 'Grave', 2 => 'Grave'],
+            'atropello'                 => [0 => 'Grave',    1 => 'Grave', 2 => 'Grave'], 
+            'falla mecanica'            => [0 => 'Leve',     1 => 'Grave', 2 => 'Grave'],
+            'principio de incendio/incendio' => [0 => 'Moderado', 1 => 'Grave', 2 => 'Grave'],
+            'daño menor'                => [0 => 'Leve',     1 => 'Moderado', 2 => 'Grave'],
+            'casi incidente'            => [0 => 'Leve',     1 => 'Moderado', 2 => 'Grave'],
         ];
 
-        // Retornar el valor de la matriz con el tipo y la columna de heridos calulcada, y como valor defecto leve
-        return $matriz[$tipo][$columnaHeridos] ?? 'leve';
+        // Retornar el valor de la matriz con el tipo y la columna de heridos calulcada, y como valor defecto Leve
+        return $matriz[$tipo][$columnaHeridos] ?? 'Leve';
     }
 }

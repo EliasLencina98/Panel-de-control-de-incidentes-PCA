@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('incidentes', function (Blueprint $table) {
+            Schema::create('incidentes', function (Blueprint $table) {
             $table->id();   //automatico
             
             //Clasificacion del incidente 
@@ -41,6 +41,7 @@ return new class extends Migration
 
             $table->timestamps(); //fecha de subida y modificacion
         });
+        
     }
 
     /**
