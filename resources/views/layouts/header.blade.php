@@ -10,6 +10,7 @@
 
     <div class="panel-sesion">
         <span> {{ auth()->user()->name }} · {{ ucfirst(auth()->user()->rol) }} </span>
+        <a class="panel-boton panel-perfil" href="{{ route('perfil.index') }}">Mi perfil</a>
 
         <form action="{{ route('logout') }}" method="POST">
             @csrf
