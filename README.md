@@ -1,58 +1,123 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Incident-Tracker
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplicación web desarrollada en **Laravel** para el registro, seguimiento, análisis georreferenciado y gestión de incidentes viales/operativos, junto con el control de choferes, vehículos y responsables de investigación.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Descripción general
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+**Incident-Tracker** centraliza la información operativa de incidentes y flota en un panel web. Permite registrar eventos con datos temporales, condiciones ambientales y de calzada, ubicación geográfica (latitud/longitud y referencia), chofer y vehículo involucrados, además de calcular automáticamente la **gravedad** del incidente a partir de una matriz de severidad según el tipo de evento, cantidad de heridos y fatalidades.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Funcionalidades implementadas
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 1. Autenticación, roles y permisos
+* **Inicio y cierre de sesión** (`AuthController`) con normalización de correo electrónico, regeneración de sesión y protección CSRF.
+* **Control de acceso basado en roles y Gates** (`AppServiceProvider`):
+  * **Administrador** y **Operador**: acceso al panel principal, gestión de incidentes, choferes y vehículos, visualización de mapas/dashboard y consulta de su perfil.
+  * **Administrador**: permisos exclusivos para registrar nuevos usuarios (`crear-usuarios`), eliminar registros (`eliminar-registros`) y asignar o remover responsables de investigación (`gestionar-responsables`).
+* **Perfil de usuario** (`PerfilController`): muestra los datos del usuario autenticado y el historial de incidentes en los que figura como responsable de investigación, junto con la fecha de asignación.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 2. Gestión de incidentes y matriz de gravedad
+* **Cálculo automático de gravedad** (`Incidente::calcularGravedad`):
+  * Si hay **fatalidades >= 1**, la gravedad se clasifica automáticamente como **`fatal`**.
+  * En caso contrario, evalúa una **matriz bidimensional** según el `tipo` de incidente y la cantidad de `heridos` (`0`, `1` o `2+`) para determinar si es `leve`, `moderado` o `grave` (recalculándose también al editar el registro).
+* **Tipos de incidentes contemplados**: colisión/choque vehicular, impacto objeto fijo, vuelco, despiste, atropello, falla mecánica, principio de incendio/incendio, daño menor y casi incidente.
+* **Seguimiento e investigación**: gestión de estado (`pendiente`, `en proceso`, `resuelto`), `causa_raiz`, `accion_correlativa` y asignación/desvinculación de usuarios responsables de investigación desde el detalle del incidente.
+* **Búsqueda y filtrado** (`obtenerDatos`): consulta dinámica por rango de fechas, gravedad, tipo, estado o texto libre (tipo, nombre de chofer o patente de vehículo).
+* **Protección al eliminar**: impide borrar choferes o vehículos que tengan incidentes asociados.
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+### 3. Gestión de flota (Choferes y Vehículos)
+* **Choferes** (`ChoferController`): alta, edición, consulta de ficha y búsqueda por nombre, DNI o licencia; valida edad mínima de 18 años y fecha de ingreso no futura.
+* **Vehículos** (`VehiculoController`): alta, edición, consulta de ficha y búsqueda por patente, modelo o tipo (`transporte de personal`, `pesado`, `liviano`), con normalización automática de patente en mayúsculas.
 
-## Agentic Development
+### 4. Dashboard analítico y mapas interactivos
+* **Dashboard** (`dashboard` / `dashboardDatos`):
+  * **KPIs y porcentajes** por gravedad (`total`, `leves`, `moderados`, `graves`, `fatales`).
+  * **Gráficos estadísticos** con **ApexCharts** (evolución temporal por mes, clasificación por gravedad y distribución por tipo).
+  * **Minimapa con mapa de calor** mediante **Leaflet** y `leaflet.heat`.
+  * **Filtros combinables** por fecha desde/hasta, gravedad, tipo y estado.
+* **Vista de mapa completa** (`mapa.blade.php` + `mapa-vistas.js`): exploración geográfica con filtros y alternancia entre marcadores y mapa de calor.
+* **Selección en mapa al cargar incidentes** (`create.blade.php` + `mapa-registro.js`): selección interactiva de coordenadas (`latitud` y `longitud`) sobre el mapa.
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+---
 
-```bash
-composer require laravel/boost --dev
+## Stack tecnológico
 
-php artisan boost:install
+* **Backend:** PHP `^8.3`, Laravel `^13.17`, Eloquent ORM
+* **Base de datos:** SQLite (`database/database.sqlite`, configurable vía `.env`)
+* **Frontend:** Blade Templates, CSS personalizado, JavaScript (`public/js/*`)
+* **Visualización de datos y mapas:** ApexCharts, Leaflet.js, Leaflet.heat
+
+---
+
+## Estructura principal del proyecto
+
+```text
+├── app/
+│   ├── Http/Controllers/     # AuthController, IncidenteController, ChoferController, VehiculoController, UsuarioController, PerfilController
+│   ├── Models/               # Incidente, Vehiculo, Chofer, User
+│   └── Providers/            # AppServiceProvider (definición de Gates y permisos)
+├── database/
+│   ├── migrations/           # Esquema de tablas y modificaciones incrementales
+│   └── seeders/              # Datos iniciales de prueba (vehículos, choferes, usuarios, incidentes, responsables)
+├── public/
+│   ├── css/                  # Estilos del panel, dashboard, gestión, mapas, incidentes y perfil
+│   └── js/                   # Scripts de dashboard, mapas, listados y pestañas de gestión
+├── resources/views/
+│   ├── layouts/              # Plantilla base (panel, header, sidebar)
+│   └── incidentes/           # Vistas de dashboard, mapa, incidentes, choferes, vehículos, usuarios, perfil y login
+└── routes/web.php            # Definición de rutas públicas, autenticadas y por rol
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+---
 
-## Contributing
+## Instalación y puesta en marcha
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+1. **Clonar el repositorio e ingresar al directorio:**
+   ```bash
+   git clone <URL-DEL-REPOSITORIO>
+   cd Incident-Tracker
+   ```
 
-## Code of Conduct
+2. **Instalar dependencias de PHP y Node:**
+   ```bash
+   composer install
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+3. **Configurar el entorno:**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+   *(Por defecto está configurado para usar SQLite; asegurate de contar con el archivo `database/database.sqlite` o ajustar los parámetros de base de datos en `.env`).*
 
-## Security Vulnerabilities
+4. **Ejecutar migraciones y seeders:**
+   ```bash
+   php artisan migrate --seed
+   ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+5. **Compilar assets y levantar el servidor de desarrollo:**
+   ```bash
+   php artisan serve
+   ```
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Usuarios de prueba (Seeders)
+
+Al ejecutar `UsuarioSeeder` se cargan usuarios de ejemplo (contraseña para todos: `12345678`):
+
+| Rol | Nombre | Correo electrónico | DNI |
+| :--- | :--- | :--- | :--- |
+| `operador` | Ana Sosa | `ana.sosa@prueba.com` | `27333444` |
+| `administrador` | Diego Perez | `diego.perez@prueba.com` | `30555666` |
+| `administrador` | Admin prueba | `admin@prueba.com` | `12345678` |
+
+---
+
+## Autores
+
+- [**Elias Lencina**](https://github.com/EliasLencina98)
+- [**Leonardo Carrasco**](https://github.com/LeonardoCarrasco)
