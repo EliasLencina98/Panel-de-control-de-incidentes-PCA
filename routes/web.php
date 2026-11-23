@@ -6,6 +6,7 @@ use App\Http\Controllers\IncidenteController;
 use App\Http\Controllers\VehiculoController;
 use App\Http\Controllers\ChoferController;
 use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\PerfilController;
 
 Route::get('/dashboard', [IncidenteController::class, 'dashboard'])->name('incidentes.dashboard');
 Route::get('/incidentes/dashboard/datos', [IncidenteController::class, 'dashboardDatos'])->name('incidentes.dashboardDatos');
@@ -24,6 +25,7 @@ Route::middleware(["auth", "can:acceder-panel"])->group(function() {
     
     //Cerrar session
     Route::post("/logout", [AuthController::class, "destroy"])->name("logout");
+    Route::get("/perfil", [PerfilController::class, "index"])->name("perfil.index");
 
     //dashboard/Inicio
     Route::get("/", [IncidenteController::class, "dashboard"])->name("incidentes.dashboard");
