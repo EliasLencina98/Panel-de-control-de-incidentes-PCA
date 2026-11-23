@@ -1,4 +1,4 @@
-# Incident-Tracker
+# Panel de control de incidentes
 
 Aplicación web desarrollada en **Laravel** para el registro, seguimiento, análisis georreferenciado y gestión de incidentes viales/operativos, junto con el control de choferes, vehículos y responsables de investigación.
 
@@ -6,7 +6,7 @@ Aplicación web desarrollada en **Laravel** para el registro, seguimiento, anál
 
 ## Descripción general
 
-**Incident-Tracker** centraliza la información operativa de incidentes y flota en un panel web. Permite registrar eventos con datos temporales, condiciones ambientales y de calzada, ubicación geográfica (latitud/longitud y referencia), chofer y vehículo involucrados, además de calcular automáticamente la **gravedad** del incidente a partir de una matriz de severidad según el tipo de evento, cantidad de heridos y fatalidades.
+**Panel de control de incidentes** centraliza la información operativa de incidentes y flota en un panel web. Permite registrar eventos con datos temporales, condiciones ambientales y de calzada, ubicación geográfica (latitud/longitud y referencia), chofer y vehículo involucrados, además de calcular automáticamente la **gravedad** del incidente a partir de una matriz de severidad según el tipo de evento, cantidad de heridos y fatalidades.
 
 ---
 
