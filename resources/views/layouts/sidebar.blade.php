@@ -36,7 +36,7 @@
     </nav>
 
     <div class="panel-sidebar-pie">
-        <a href="{{ route("incidentes.create") }}" class="panel-boton panel-boton-verde"> Registrar incidentes </a>
+        <a href="{{ route("incidentes.create") }}" class="panel-boton panel-boton-verde"> + Registrar incidentes </a>
     </div>
 
 </aside>

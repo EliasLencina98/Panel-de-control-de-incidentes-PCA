@@ -109,21 +109,6 @@ ESTILOS DASHBOARD
     margin-bottom: 12px;
 }
 
-.dash-link-btn {
-    background-color: rgba(37, 99, 235, 0.12);
-    color: #93c5fd;
-    border: 1px solid rgba(59, 130, 246, 0.35);
-    border-radius: 8px;
-    padding: 6px 12px;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    white-space: nowrap;
-}
-
-.dash-link-btn:hover {
-    background-color: rgba(37, 99, 235, 0.22);
-}
 
 .dash-chart-box {
     width: 100%;

@@ -28,9 +28,9 @@
             </p>
         </div>
         <div>
-            <button type="button" onclick="" class="panel-boton panel-boton-verde">
+            <a type="button" href="{{ route('incidentes.create') }}" class="panel-boton panel-boton-verde">
                 <span>+ Registrar Incidente</span>
-            </button>
+    </a>
         </div>
     </div>
 
@@ -208,9 +208,6 @@
                     <h2>Analisis riesgo geografico (Mapa de calor)</h2>
                     <p class="panel-texto-secundario dash-subtitulo-sm">Vista rápida de puntos críticos en Añelo, Neuquén, Cipolletti y alrededores</p>
                 </div>
-                <button type="button" onclick="" class="dash-link-btn">
-                    <span>Abrir mapa completo</span>
-                </button>
             </div>
             <div id="dashboard-mini-map" class="dash-mapa"></div>
         </div>
