@@ -10,38 +10,19 @@ class ChoferSeeder extends Seeder
     public function run(): void
     {
         $ahora = now();
+        $faker = fake('es_AR');
 
-        DB::table('chofer')->insert([
-            [
-                'dni' => '28456123',
-                'nombre' => 'Martin Gomez',
-                'fecha_nacimiento' => '1985-04-12',
-                'fecha_ingreso' => '2015-03-01',
+        for ($i = 0; $i < 20; $i++) {
+            DB::table('chofer')->insertOrIgnore([
+                'dni' => (string) fake()->unique()->numberBetween(20000000, 45000000),
+                'nombre' => $faker->name(),
+                'fecha_nacimiento' => fake()->date('Y-m-d', '-25 years'),
+                'fecha_ingreso' => fake()->date('Y-m-d', '-1 year'),
                 'puesto' => 'Chofer',
-                'licencia' => 'E1',
+                'licencia' => fake()->randomElement(['C1', 'D2', 'E1']),
                 'created_at' => $ahora,
                 'updated_at' => $ahora,
-            ],
-            [
-                'dni' => '31987456',
-                'nombre' => 'Lucia Fernandez',
-                'fecha_nacimiento' => '1990-09-25',
-                'fecha_ingreso' => '2020-07-15',
-                'puesto' => 'Chofer',
-                'licencia' => 'D2',
-                'created_at' => $ahora,
-                'updated_at' => $ahora,
-            ],
-            [
-                'dni' => '30324456',
-                'nombre' => 'Pedro Fernandez',
-                'fecha_nacimiento' => '1980-12-20',
-                'fecha_ingreso' => '2010-07-15',
-                'puesto' => 'Chofer',
-                'licencia' => 'C1',
-                'created_at' => $ahora,
-                'updated_at' => $ahora,
-            ],
-        ]);
+            ]);
+        }
     }
 }

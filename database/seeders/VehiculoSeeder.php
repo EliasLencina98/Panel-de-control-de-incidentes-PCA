@@ -10,24 +10,36 @@ class VehiculoSeeder extends Seeder
     public function run(): void
     {
         $ahora = now();
+        $modelos = [
+            'Scania R 450',
+            'Iveco Stralis',
+            'Ford Cargo',
+            'Toyota Hilux',
+            'Renault Master',
+            'Volvo FH 460',
+            'Mercedes-Benz Sprinter',
+        ];
 
-        DB::table('vehiculo')->insert([
-            [
-                'patente' => 'AB-123-CD',
-                'modelo' => 'Volvo FH 460',
-                'anio' => 2021,
-                'tipo_vehiculo' => 'Pesado',
+        $tipos = [
+            'Pesado',
+            'Liviano',
+            'Transporte de personal'
+        ];
+
+        $registros = [];
+
+        for ($i = 0; $i < 15; $i++) {
+            $registros[] = [
+                'patente' => strtoupper(fake()->unique()->bothify('A?-###-??')),
+                'modelo' => fake()->randomElement($modelos),
+                'anio' => fake()->numberBetween(2016, 2026),
+                'tipo_vehiculo' => fake()->randomElement($tipos),
                 'created_at' => $ahora,
                 'updated_at' => $ahora,
-            ],
-            [
-                'patente' => 'AC-456-EF',
-                'modelo' => 'Mercedes-Benz Sprinter',
-                'anio' => 2022,
-                'tipo_vehiculo' => 'Transporte de personal',
-                'created_at' => $ahora,
-                'updated_at' => $ahora,
-            ],
-        ]);
+            ];
+        }
+
+        DB::table('vehiculo')->insertOrIgnore($registros);
+    
     }
 }
