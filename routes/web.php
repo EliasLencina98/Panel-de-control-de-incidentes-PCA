@@ -44,11 +44,21 @@ Route::middleware(["auth", "can:acceder-panel"])->group(function () {
 
     // rutas Choferes
     Route::get("choferes/datos", [ChoferController::class, "obtenerDatos"])->name("choferes.obtenerDatos");
-    Route::get('/choferes/{id}', [ChoferController::class, 'show'])->name('choferes.show');
+    Route::get('/choferes/crear', [ChoferController::class, 'create'])
+        ->middleware('can:gestionar-vehiculo-chofer')
+        ->name('choferes.create');
+    Route::get('/choferes/{id}', [ChoferController::class, 'show'])
+        ->whereNumber('id')
+        ->name('choferes.show');
 
     // rutas Vehiculo 
     Route::get("/vehiculos/datos", [VehiculoController::class, "obtenerDatos"])->name("vehiculos.obtenerDatos");
-    Route::get('/vehiculos/{id}', [VehiculoController::class, 'show'])->name('vehiculos.show');
+    Route::get('/vehiculos/crear', [VehiculoController::class, 'create'])
+        ->middleware('can:gestionar-vehiculo-chofer')
+        ->name('vehiculos.create');
+    Route::get('/vehiculos/{id}', [VehiculoController::class, 'show'])
+        ->whereNumber('id')
+        ->name('vehiculos.show');
 
 
     // RUTAS ADMINISTRADOR
@@ -62,9 +72,7 @@ Route::middleware(["auth", "can:acceder-panel"])->group(function () {
         Route::post('/vehiculos', [VehiculoController::class, 'store'])->name('vehiculos.store');
         Route::get('/vehiculos/{id}/editar', [VehiculoController::class, 'edit'])->name('vehiculos.edit');
         Route::put('/vehiculos/{id}', [VehiculoController::class, 'update'])->name('vehiculos.update');
-        Route::get('/vehiculos/crear', [VehiculoController::class, 'create'])->name('vehiculos.create');
 
-        Route::get('/choferes/crear', [ChoferController::class, 'create'])->name('choferes.create');
         Route::post('/choferes', [ChoferController::class, 'store'])->name('choferes.store');
         Route::get('/choferes/{id}/editar', [ChoferController::class, 'edit'])->name('choferes.edit');
         Route::put('/choferes/{id}', [ChoferController::class, 'update'])->name('choferes.update');

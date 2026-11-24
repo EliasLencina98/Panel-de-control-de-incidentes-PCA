@@ -20,15 +20,15 @@
             <h1>Gestión de incidentes y flota</h1>
 
             <div class="gestion-acciones">
-                <a href="{{ route("incidentes.create") }}" class="panel-boton panel-boton-verde">
+                <a href="{{ route('incidentes.create') }}" class="panel-boton panel-boton-verde">
                     Registrar incidente
                 </a>
             @can('gestionar-vehiculo-chofer')
-                <a href="{{ route("choferes.create") }}" class="panel-boton gestion-boton-azul">
+                <a href="{{ route('choferes.create') }}" class="panel-boton gestion-boton-azul">
                     Nuevo chofer
                 </a>
 
-                <a href="{{ route("vehiculos.create") }}" class="panel-boton gestion-boton-naranja">
+                <a href="{{ route('vehiculos.create') }}" class="panel-boton gestion-boton-naranja">
                     Agregar vehículo
                 </a>
             @endcan
