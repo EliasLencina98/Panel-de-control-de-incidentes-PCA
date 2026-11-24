@@ -35,7 +35,7 @@ class ChoferController extends Controller
             'fecha_nacimiento' => 'required|date|before:-18 years',
             'fecha_ingreso' => 'required|date|before_or_equal:today',
             'puesto' => 'required|string|max:100',
-            'licencia' => 'required|string|max:50',
+            'licencia' => 'required|in: B1, B2, C1, C2, D1, D2, D3, E1',
         ]);
 
         Chofer::create([

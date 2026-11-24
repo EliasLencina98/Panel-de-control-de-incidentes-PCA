@@ -57,7 +57,16 @@
 
                     <div>
                         <label for="licencia">Licencia</label>
-                        <input type="text" id="licencia" name="licencia" value="{{ old('licencia') }}" placeholder="Ej.: B1, C2, E1" maxlength="50" required>
+                            <select id="licencia" name="licencia" value="{{ old('licencia') }}" required>
+                                <option value="B1">B1</option>
+                                <option value="B2">B2</option>
+                                <option value="C1">C1</option>
+                                <option value="C2">C2</option>
+                                <option value="D1">D1</option>
+                                <option value="D2">D2</option>
+                                <option value="D3">D3</option>
+                                <option value="E1">E1</option>
+                            </select>
                     </div>
                 </div>
 
