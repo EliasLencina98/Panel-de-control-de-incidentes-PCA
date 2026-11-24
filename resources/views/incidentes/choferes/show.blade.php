@@ -18,10 +18,11 @@
                 <a href="{{ route('incidentes.index') }}" class="panel-boton gestion-boton-secundario">
                     Volver al listado
                 </a>
-
+            @can('gestionar-vehiculo-chofer')
                 <a href="{{ route('choferes.edit', $chofer->id) }}" class="panel-boton gestion-boton-azul">
                     Modificar
                 </a>
+            @endcan
             </div>
         </div>
 

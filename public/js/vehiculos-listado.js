@@ -1,6 +1,8 @@
 const formularioVehiculos = document.getElementById("form-vehiculos");
 const listadoVehiculos = document.getElementById("listado-vehiculos");
 const mensajeVehiculos = document.getElementById("mensaje-vehiculos");
+const panelGestionVehiculos = document.getElementById("gestion-panel");
+const puedeGestionarVehiculos = panelGestionVehiculos?.dataset.gestionar === "si";
 
 async function buscarVehiculos(){
     //datos del formulario vehiculos
@@ -44,12 +46,15 @@ async function buscarVehiculos(){
             detalle.className = "panel-boton gestion-boton-secundario";
             detalle.href = "/vehiculos/" + vehiculo.id;
 
-            const editar = document.createElement("a");
-            editar.textContent = "Modificar";
-            editar.className = "panel-boton gestion-boton-naranja";
-            editar.href = "/vehiculos/" + vehiculo.id + "/editar";
+            acciones.append(detalle);
+            if (puedeGestionarVehiculos) {
+                const editar = document.createElement("a");
+                editar.textContent = "Modificar";
+                editar.className = "panel-boton gestion-boton-naranja";
+                editar.href = "/vehiculos/" + vehiculo.id + "/editar";
+                acciones.append(editar);
+            }
 
-            acciones.append(detalle, editar);
             agregarBotonEliminar(acciones, "/vehiculos/" + vehiculo.id, buscarVehiculos);
             tarjeta.append(acciones);
 

@@ -13,7 +13,7 @@ Route::get('/incidentes/dashboard/datos', [IncidenteController::class, 'dashboar
 Route::view("/mapa", "incidentes.mapa")->name("incidentes.mapa");
 
 //Acceso Invitados
-Route::middleware("guest")->group(function() {
+Route::middleware("guest")->group(function () {
     Route::get("/login", [AuthController::class, "create"])->name("login");
     Route::post("/login", [AuthController::class, "store"])->name("login.store");
 });
@@ -21,8 +21,8 @@ Route::middleware("guest")->group(function() {
 
 //Panel: ambos roles
 
-Route::middleware(["auth", "can:acceder-panel"])->group(function() {
-    
+Route::middleware(["auth", "can:acceder-panel"])->group(function () {
+
     //Cerrar session
     Route::post("/logout", [AuthController::class, "destroy"])->name("logout");
     Route::get("/perfil", [PerfilController::class, "index"])->name("perfil.index");
@@ -43,42 +43,43 @@ Route::middleware(["auth", "can:acceder-panel"])->group(function() {
     Route::put("/incidentes/{id}", [IncidenteController::class, "update"])->name("incidentes.update");
 
     // rutas Choferes
-    Route::get('/choferes/crear', [ChoferController::class, 'create'])->name('choferes.create');  
     Route::get("choferes/datos", [ChoferController::class, "obtenerDatos"])->name("choferes.obtenerDatos");
-    Route::post('/choferes', [ChoferController::class, 'store'])->name('choferes.store');
-    Route::get('/choferes/{id}/editar', [ChoferController::class, 'edit'])->name('choferes.edit');
-    Route::put('/choferes/{id}', [ChoferController::class, 'update'])->name('choferes.update');
     Route::get('/choferes/{id}', [ChoferController::class, 'show'])->name('choferes.show');
 
-    // rutas Vehiculo
-    Route::get('/vehiculos/crear', [VehiculoController::class, 'create'])->name('vehiculos.create');  
+    // rutas Vehiculo 
     Route::get("/vehiculos/datos", [VehiculoController::class, "obtenerDatos"])->name("vehiculos.obtenerDatos");
-    Route::post('/vehiculos', [VehiculoController::class, 'store'])->name('vehiculos.store');
-    Route::get('/vehiculos/{id}/editar', [VehiculoController::class, 'edit'])->name('vehiculos.edit');
-    Route::put('/vehiculos/{id}', [VehiculoController::class, 'update'])->name('vehiculos.update');
     Route::get('/vehiculos/{id}', [VehiculoController::class, 'show'])->name('vehiculos.show');
 
 
     // RUTAS ADMINISTRADOR
-    Route::middleware("can:crear-usuarios")->group(function() {
+    Route::middleware("can:crear-usuarios")->group(function () {
         //Crear usuarios
         Route::get("/usuarios/crear", [UsuarioController::class, "create"])->name("usuarios.create");
         Route::post("/usuarios", [UsuarioController::class, "store"])->name("usuarios.store");
-        
     });
 
-    Route::middleware("can:eliminar-registros")->group(function() {
+    Route::middleware("can:gestionar-vehiculo-chofer")->group(function () {
+        Route::post('/vehiculos', [VehiculoController::class, 'store'])->name('vehiculos.store');
+        Route::get('/vehiculos/{id}/editar', [VehiculoController::class, 'edit'])->name('vehiculos.edit');
+        Route::put('/vehiculos/{id}', [VehiculoController::class, 'update'])->name('vehiculos.update');
+        Route::get('/vehiculos/crear', [VehiculoController::class, 'create'])->name('vehiculos.create');
+
+        Route::get('/choferes/crear', [ChoferController::class, 'create'])->name('choferes.create');
+        Route::post('/choferes', [ChoferController::class, 'store'])->name('choferes.store');
+        Route::get('/choferes/{id}/editar', [ChoferController::class, 'edit'])->name('choferes.edit');
+        Route::put('/choferes/{id}', [ChoferController::class, 'update'])->name('choferes.update');
+    });
+
+    Route::middleware("can:eliminar-registros")->group(function () {
         //Eliminar incidentes/choferes/vehiculos
         Route::delete("/incidentes/{id}", [IncidenteController::class, "destroy"])->name("incidentes.destroy");
         Route::delete("/choferes/{id}", [ChoferController::class, "destroy"])->name("choferes.destroy");
         Route::delete("/vehiculos/{id}", [VehiculoController::class, "destroy"])->name("vehiculos.destroy");
     });
 
-    Route::middleware("can:gestionar-responsables")->group(function() {
+    Route::middleware("can:gestionar-responsables")->group(function () {
         //Asignar y desligar usuario de incidente (responsable de investigacion)
         Route::post("/incidentes/{id}/responsables/", [IncidenteController::class, "asignarResponsable"])->name("incidentes.responsables.store");
         Route::delete("/incidentes/{id}/responsables/{usuario}", [IncidenteController::class, "quitarResponsable"])->name("incidentes.responsables.destroy");
     });
-
 });
-

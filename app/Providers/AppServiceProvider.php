@@ -35,6 +35,10 @@ class AppServiceProvider extends ServiceProvider
             return $user->rol === "administrador";
         });
 
+        Gate::define("gestionar-vehiculo-chofer", function(User $user){
+            return $user->rol === "administrador";
+        });
+
 
     }
 }

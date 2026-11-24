@@ -1,6 +1,8 @@
 const formularioChoferes = document.getElementById("form-choferes");
 const listadoChoferes = document.getElementById("listado-choferes");
 const mensajeChoferes = document.getElementById("mensaje-choferes");
+const panelGestionChoferes = document.getElementById("gestion-panel");
+const puedeGestionarChoferes = panelGestionChoferes?.dataset.gestionar === "si";
 
 async function buscarChoferes(){
     //datos del formulario choferes
@@ -44,12 +46,15 @@ async function buscarChoferes(){
             detalle.className = "panel-boton gestion-boton-secundario";
             detalle.href = "/choferes/" + chofer.id;
 
-            const editar = document.createElement("a");
-            editar.textContent = "Modificar";
-            editar.className = "panel-boton gestion-boton-azul";
-            editar.href = "/choferes/" + chofer.id + "/editar";
+            acciones.append(detalle);
+            if (puedeGestionarChoferes) {
+                const editar = document.createElement("a");
+                editar.textContent = "Modificar";
+                editar.className = "panel-boton gestion-boton-azul";
+                editar.href = "/choferes/" + chofer.id + "/editar";
+                acciones.append(editar);
+            }
 
-            acciones.append(detalle, editar);
             agregarBotonEliminar(acciones, "/choferes/" + chofer.id, buscarChoferes);
             tarjeta.append(acciones);
 

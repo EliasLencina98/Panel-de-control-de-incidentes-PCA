@@ -14,7 +14,7 @@
 @endpush
 
 @section("contenido")
-    <section class="gestion" id="gestion-panel" @can("eliminar-registros") data-eliminar = "si" @else data-eliminar ="no" @endcan>
+    <section class="gestion" id="gestion-panel" @can("eliminar-registros") data-eliminar = "si" @else data-eliminar ="no" @endcan @can("gestionar-vehiculo-chofer") data-gestionar="si" @else data-gestionar="no" @endcan>
 
         <div class="panel-tarjeta gestion-encabezado">
             <h1>Gestión de incidentes y flota</h1>
@@ -23,7 +23,7 @@
                 <a href="{{ route("incidentes.create") }}" class="panel-boton panel-boton-verde">
                     Registrar incidente
                 </a>
-
+            @can('gestionar-vehiculo-chofer')
                 <a href="{{ route("choferes.create") }}" class="panel-boton gestion-boton-azul">
                     Nuevo chofer
                 </a>
@@ -31,6 +31,7 @@
                 <a href="{{ route("vehiculos.create") }}" class="panel-boton gestion-boton-naranja">
                     Agregar vehículo
                 </a>
+            @endcan
             </div>
 
         </div>
