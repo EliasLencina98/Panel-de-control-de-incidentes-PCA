@@ -38,7 +38,7 @@
 
                 <div>
                     <label for="dni">DNI</label>
-                    <input type="text" id="dni" name="dni" value="{{ old('dni', $chofer->dni) }}" maxlength="15" required>
+                    <input type="number" id="dni" name="dni" value="{{ old('dni', $chofer->dni) }}" maxlength="8" required>
                 </div>
 
                 <div>

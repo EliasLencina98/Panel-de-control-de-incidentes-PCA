@@ -30,12 +30,12 @@ class ChoferController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'dni' => 'required|string|unique:chofer,dni|max:15',
+            'dni' => 'required|integer|unique:chofer,dni|max:99999999',
             'nombre' => 'required|string|max:255',
             'fecha_nacimiento' => 'required|date|before:-18 years',
             'fecha_ingreso' => 'required|date|before_or_equal:today',
             'puesto' => 'required|string|max:100',
-            'licencia' => 'required|in: B1, B2, C1, C2, D1, D2, D3, E1',
+            'licencia' => 'required|in:B1,B2,C1,C2,D1,D2,D3,E1',
         ]);
 
         Chofer::create([
@@ -61,12 +61,12 @@ class ChoferController extends Controller
         $chofer = Chofer::findOrFail($id);
 
         $request->validate([
-            'dni' => 'required|string|max:15|unique:chofer,dni,' . $chofer->id,
+            'dni' => 'required|integer|max:99999999|unique:chofer,dni,' . $chofer->id,
             'nombre' => 'required|string|max:255',
             'fecha_nacimiento' => 'required|date|before:-18 years',
             'fecha_ingreso' => 'required|date|before_or_equal:today',
             'puesto' => 'required|string|max:100',
-            'licencia' => 'required|string|max:50',
+            'licencia' => 'required|in:B1,B2,C1,C2,D1,D2,D3,E1',
         ]);
 
         $chofer->update([

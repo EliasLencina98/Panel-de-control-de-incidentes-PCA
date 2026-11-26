@@ -32,12 +32,12 @@
                 <div class="gestion-campos">
                     <div>
                         <label for="nombre">Nombre y apellido</label>
-                        <input type="text" id="nombre" name="nombre" value="{{ old('nombre') }}" maxlength="255" required>
+                        <input type="text" id="nombre" name="nombre" value="{{ old('nombre') }}" placeholder="ej: Luis Alvarez" maxlength="255" required>
                     </div>
 
                     <div>
                         <label for="dni">DNI</label>
-                        <input type="text" id="dni" name="dni" value="{{ old('dni') }}" maxlength="15" required>
+                        <input type="number" id="dni" name="dni" value="{{ old('dni') }}" maxlength="8" placeholder="ej: 12345678">
                     </div>
 
                     <div>
@@ -52,7 +52,7 @@
 
                     <div>
                         <label for="puesto">Puesto</label>
-                        <input type="text" id="puesto" name="puesto" value="{{ old('puesto') }}" maxlength="100" required>
+                        <input type="text" id="puesto" name="puesto" value="{{ old('puesto') }}" maxlength="100" placeholder="ej: camionero, transporte de pasajeros, chofer" required>
                     </div>
 
                     <div>

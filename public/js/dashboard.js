@@ -9,7 +9,7 @@
 
     if (!form) return;
 
-    const baseTheme = {
+    const estiloBase = {
         theme: { mode: "dark" },
         chart: {
             background: "transparent",
@@ -30,17 +30,17 @@
         const elTendencia = document.querySelector("#grafico-tendencia");
         if (elTendencia && typeof ApexCharts !== "undefined") {
             graficoTendencia = new ApexCharts(elTendencia, {
-                ...baseTheme,
-                chart: { ...baseTheme.chart, type: "area", height: 280 },
+                ...estiloBase,
+                chart: { ...estiloBase.chart, type: "area", height: 280 },
                 series: [{ name: "Incidentes", data: [] }],
                 xaxis: {
                     categories: [],
-                    labels: { style: { colors: "#a8b5c9", fontSize: "12px" } },
+                    labels: { style: { colors: "#a8b5c9", fontSize: "13px" } },
                 },
                 yaxis: {
                     min: 0,
                     forceNiceScale: true,
-                    labels: { style: { colors: "#a8b5c9", fontSize: "12px" } },
+                    labels: { style: { colors: "#a8b5c9", fontSize: "13px" } },
                 },
                 colors: ["#3b82f6"],
                 stroke: { curve: "smooth", width: 2.5 },
@@ -48,7 +48,7 @@
                     type: "gradient",
                     gradient: { opacityFrom: 0.35, opacityTo: 0.02 },
                 },
-                dataLabels: { enabled: false },
+                dataLabels: { enabled: true },
                 noData: {
                     text: "Sin registros para los filtros seleccionados",
                     style: { color: "#a8b5c9", fontSize: "13px" },
@@ -60,8 +60,8 @@
         const elGravedad = document.querySelector("#grafico-gravedad");
         if (elGravedad && typeof ApexCharts !== "undefined") {
             graficoGravedad = new ApexCharts(elGravedad, {
-                ...baseTheme,
-                chart: { ...baseTheme.chart, type: "bar", height: 280 },
+                ...estiloBase,
+                chart: { ...estiloBase.chart, type: "bar", height: 280 },
                 series: [{ name: "Incidentes", data: [0, 0, 0, 0] }],
                 plotOptions: {
                     bar: {
@@ -73,15 +73,15 @@
                 colors: ["#10b981", "#f59e0b", "#f43f5e", "#A855F7"],
                 xaxis: {
                     categories: ["Leves", "Moderados", "Graves", "Fatales"],
-                    labels: { style: { colors: "#a8b5c9", fontSize: "12px" } },
+                    labels: { style: { colors: "#a8b5c9", fontSize: "15px" } },
                 },
                 yaxis: {
                     min: 0,
                     forceNiceScale: true,
-                    labels: { style: { colors: "#a8b5c9", fontSize: "12px" } },
+                    labels: { style: { colors: "#a8b5c9", fontSize: "13px" } },
                 },
                 legend: { show: false },
-                dataLabels: { enabled: false },
+                dataLabels: { enabled: true },
             });
             graficoGravedad.render();
         }
@@ -89,8 +89,8 @@
         const elTipo = document.querySelector("#grafico-tipo");
         if (elTipo && typeof ApexCharts !== "undefined") {
             graficoTipo = new ApexCharts(elTipo, {
-                ...baseTheme,
-                chart: { ...baseTheme.chart, type: "donut", height: 350 },
+                ...estiloBase,
+                chart: { ...estiloBase.chart, type: "donut", height: 350 },
                 series: [],
                 labels: [],
                 stroke: { colors: ["#1e293b"] },
@@ -188,11 +188,11 @@
         const mapaClaro = L.tileLayer(
             "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
             {
-                maxZoom: 19,
+                maxZoom: 30,
                 attribution:
                     '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
             },
-        ).addTo(mapa);
+        );
 
         const mapaOscuro = L.tileLayer(
             "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png?key=cb1_51qx_1_24e563624e6d7319006285fd",
@@ -203,7 +203,7 @@
                     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> ' +
                     '&copy; <a href="https://carto.com/attributions">CARTO</a>',
             },
-        );
+        ).addTo(mapa);
 
         const leyenda = L.control({ position: "bottomleft" });
         leyenda.onAdd = function () {
@@ -220,13 +220,13 @@
         };
         leyenda.addTo(mapa);
 
-        capasIncidentes = L.layerGroup().addTo(mapa);
+        capasIncidentes = L.layerGroup();
         mapaCalor = L.heatLayer([], {
-            radius: 60,
-            blur: 30,
+            radius: 45,
+            blur: 20,
             maxZoom: 13,
             minOpacity: 0.4,
-        });
+        }).addTo(mapa);
 
         L.control
             .layers(

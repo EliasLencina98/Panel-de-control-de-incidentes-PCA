@@ -284,6 +284,7 @@ class IncidenteController extends Controller
         }
 
         // KPIs por gravedad respetando los filtros activos
+        // clone $query hace una copia de la consulta de los filtros, en caso que existan, para armar consultas especificas y no solaparse cada consulta.
         $porGravedad = (clone $query)
             ->selectRaw('gravedad, COUNT(*) as total')
             ->groupBy('gravedad')
@@ -315,7 +316,7 @@ class IncidenteController extends Controller
             ->orderBy('mes')
             ->get();
 
-        // Distribución por tipo
+        // distribucion por tipo
         $porTipo = (clone $query)
             ->selectRaw('tipo, COUNT(*) as total')
             ->groupBy('tipo')

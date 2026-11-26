@@ -28,17 +28,17 @@
                 <div class="gestion-campos">
                     <div>
                         <label for="name">Nombre y apellido</label>
-                        <input type="text" id="name" name="name" value="{{ old('name') }}" maxlength="255" required>
+                        <input type="text" id="name" name="name" value="{{ old('name') }}" maxlength="255" placeholder="ej: Luis Alvarez" required>
                     </div>
 
                     <div>
                         <label for="dni">DNI</label>
-                        <input type="text" id="dni" name="dni" value="{{ old('dni') }}" maxlength="15" required>
+                        <input type="text" id="dni" name="dni" value="{{ old('dni') }}" maxlength="15" placeholder="ej: 12345678">
                     </div>
 
                     <div>
                         <label for="email">Correo electrónico</label>
-                        <input type="email" id="email" name="email" value="{{ old('email') }}" required>
+                        <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="nombre@apellido.com" required>
                     </div>
 
                     <div>

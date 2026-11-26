@@ -32,7 +32,7 @@
                 <div class="gestion-campos">
                     <div>
                         <label for="patente">Patente</label>
-                        <input type="text" id="patente" name="patente" value="{{ old('patente') }}" maxlength="20" required>
+                        <input type="text" id="patente" name="patente" value="{{ old('patente') }}" maxlength="9" placeholder="ej: AA-123-BB o ABC-123" required>
                     </div>
 
                     <div>
@@ -42,7 +42,7 @@
 
                     <div>
                         <label for="anio">Año</label>
-                        <input type="number" id="anio" name="anio" value="{{ old('anio') }}" min="1950" max="{{ date('Y') + 1 }}" required>
+                        <input type="number" id="anio" name="anio" value="{{ old('anio') }}" min="1950" max="{{ date('Y') + 1 }}" placeholder="ej:2019" required>
                     </div>
 
                     <div>
