@@ -77,8 +77,8 @@ Aplicación web desarrollada en **Laravel** para el registro, seguimiento, anál
 
 1. **Clonar el repositorio e ingresar al directorio:**
    ```bash
-   git clone <URL-DEL-REPOSITORIO>
-   cd Incident-Tracker
+   git clone https://github.com/EliasLencina98/Panel-de-control-de-incidentes-PCA
+   cd Panel-de-control-de-incidentes-PCA
    ```
 
 2. **Instalar dependencias de PHP y Node:**
